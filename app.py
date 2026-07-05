@@ -4,11 +4,32 @@ Intended as a personal backend for KMyMoney's online quote feature.
 Returns JSON. See README.md for the KMyMoney source configuration.
 """
 
-from flask import Flask, jsonify
+import logging
+
+from flask import Flask, jsonify, request
 
 import yfinance as yf
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(message)s",
+)
+log = logging.getLogger("stockapi")
+
 app = Flask(__name__)
+
+
+@app.after_request
+def log_request(response):
+    """Log every request (success or failure) with client, path, and status."""
+    log.info(
+        "%s %s %s -> %s",
+        request.remote_addr,
+        request.method,
+        request.full_path.rstrip("?"),
+        response.status_code,
+    )
+    return response
 
 
 def latest_quote(ticker: str) -> dict:
@@ -17,7 +38,8 @@ def latest_quote(ticker: str) -> dict:
     Uses the daily history (last few sessions) so the price is always paired
     with the actual date it was observed, which is what a portfolio tool wants.
     """
-    ticker = ticker.strip().upper()
+    # KMyMoney prepends a "$" to symbols; strip it (and any stray whitespace).
+    ticker = ticker.strip().lstrip("$").strip().upper()
     tk = yf.Ticker(ticker)
 
     hist = tk.history(period="5d", auto_adjust=False)
