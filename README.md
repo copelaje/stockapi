@@ -42,11 +42,14 @@ curl http://127.0.0.1:5000/quote/AAPL
 
 Settings → Configure KMyMoney → Online Quotes → New source:
 
+- **Type:** HTML (not Finance::Quote) — KMyMoney fetches the URL directly and
+  applies the regexes below to the raw response body.
 - **URL:** `http://localhost:5000/quote/%1`
   (`%1` is substituted with the security's symbol)
+- **Symbol regex:** `"symbol":\s*"([^"]+)"`
 - **Price regex:** `"price":\s*([0-9.]+)`
-- **Date regex:** `"date":\s*"([0-9]+)-([0-9]+)-([0-9]+)"`
-- **Date format:** `%y %m %d`
+- **Date regex:** `"date":\s*"([0-9-]+)"`
+- **Date format:** `%y-%m-%d`
 
 Then, on a security/equity's *Online update* settings, choose this source as the
 Online source. KMyMoney fetches the URL and applies the regexes to the JSON body.
