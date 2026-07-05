@@ -1,11 +1,14 @@
-IMAGE := stockapi:latest
+IMAGE := ghcr.io/copelaje/stockapi:latest
 
-.PHONY: build up down logs
+.PHONY: build pull up down logs
 
 build:
 	docker build -t $(IMAGE) .
 
-up:
+pull:
+	docker compose pull
+
+up: pull
 	docker compose up -d
 
 down:

@@ -1,7 +1,9 @@
 services:
   stockapi:
+    # Default to the image published by CI. Run `docker compose pull` to fetch
+    # the latest, or `docker compose build` to build locally from ./Dockerfile.
+    image: ghcr.io/copelaje/stockapi:latest
     build: .
-    image: stockapi:latest
     container_name: stockapi
     restart: unless-stopped
     ports:
